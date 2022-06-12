@@ -3,6 +3,8 @@ project(problem27)
 project(problem29)
 set(CMAKE_CXX_STANDARD 14)
 
+add_executable(problem22 Problem22_NamesScores/main.cpp)
 add_executable(problem27 Problem27_QuadraticPrimes/main.cpp)
 add_executable(problem29 Problem29_DistinctPowers/main.cpp)
 add_executable(problem35 Problem35_CircularPrimes/main.cpp)
+add_executable(problem46 Problem46_GoldbachOtherConjecture/main.cpp)
