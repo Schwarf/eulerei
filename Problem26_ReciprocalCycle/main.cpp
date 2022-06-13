@@ -1,38 +1,39 @@
 //
 // Created by andreas on 12.06.22.
 //
-#include <deque>
+#include <vector>
 #include <iostream>
 
-int count_length_of_recurring_cycle(int numerator, int denominator, std::deque<int> & cycle, bool init, int & max_size)
+void count_length_of_recurring_cycle(int numerator, int denominator, std::vector<int> & cycle)
 {
-
-	int res = numerator/denominator;
-	if(!init && res ==0)
-		return 0;
-	if(cycle.front() == res)
+	int depth{};
+	while(numerator != 0)
 	{
-		cycle.pop_front();
-	}
-	else if(!init) {
+		int res = numerator/denominator;
 		cycle.push_back(res);
-		max_size =std::max(max_size, (int)cycle.size());
+		numerator = (numerator % denominator)*10;
+		depth++;
+		if(depth ==1000)
+			break;
 	}
-	if(!init && cycle.empty())
-		return max_size;
-
-	numerator = (numerator % denominator)*10;
-	count_length_of_recurring_cycle(numerator, denominator, cycle, false, max_size);
-
 }
 
 
 
 int main()
 {
-	std::deque<int> help;
+
 	int max_size{};
-	for(int i =2; i < 11; ++i)
-		std::cout<< count_length_of_recurring_cycle(1, i, help, true, max_size) << std::endl;
+	int count{};
+	for(int i =2; i < 1000; ++i) {
+		std::vector<int> help;
+		count_length_of_recurring_cycle(1, i, help);
+		if(help.size() ==1000)
+		{
+			count++;
+			std::cout << i << std::endl;
+		}
+	}
+	std::cout << "count " << count << std::endl;
 	return 0;
 }
