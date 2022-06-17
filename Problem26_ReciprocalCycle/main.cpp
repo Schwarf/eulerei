@@ -4,36 +4,41 @@
 #include <vector>
 #include <iostream>
 
-void count_length_of_recurring_cycle(int numerator, int denominator, std::vector<int> & cycle)
+int max_sequence_length(int max_value,int & number_with_max_sequence_length)
 {
-	int depth{};
-	while(numerator != 0)
+	int sequence_length{};
+	int max_sequence_length{};
+
+	for(int number = max_value; number > 1; --number)
 	{
-		int res = numerator/denominator;
-		cycle.push_back(res);
-		numerator = (numerator % denominator)*10;
-		depth++;
-		if(depth ==1000)
+		// max_sequence_length is number-1
+		if(max_sequence_length >= number)
 			break;
+		auto found_remainders = std::vector<int>(max_value);
+		int nominator{1};
+		int position{0};
+		while(found_remainders[nominator] == 0 && nominator != 0)
+		{
+			found_remainders[nominator] = position;
+			nominator *= 10;
+			nominator %= number;
+			position++;
+		}
+		sequence_length = position - found_remainders[nominator];
+		if(sequence_length > max_sequence_length) {
+			max_sequence_length = sequence_length;
+			number_with_max_sequence_length = number;
+		}
+
 	}
+	return max_sequence_length;
 }
 
 
 
 int main()
 {
-
-	int max_size{};
-	int count{};
-	for(int i =2; i < 1000; ++i) {
-		std::vector<int> help;
-		count_length_of_recurring_cycle(1, i, help);
-		if(help.size() ==1000)
-		{
-			count++;
-			std::cout << i << std::endl;
-		}
-	}
-	std::cout << "count " << count << std::endl;
-	return 0;
+	int number{};
+	std::cout << max_sequence_length(7, number) << std::endl;
+	std::cout << number << std::endl;
 }
