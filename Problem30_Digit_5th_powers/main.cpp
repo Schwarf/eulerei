@@ -6,10 +6,10 @@
 #include <numeric>
 #include <iostream>
 
-std::array<int, 5> get_digits(int number)
+std::array<int, 6> get_digits(int number)
 {
-	auto result = std::array<int, 5>();
-	for(int i=0; i < 5; ++i) {
+	auto result = std::array<int, 6>();
+	for(int i=0; i < 6; ++i) {
 		int digit = number % 10;
 		number /= 10;
 		result[i] = digit;
