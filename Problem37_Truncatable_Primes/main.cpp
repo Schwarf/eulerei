@@ -35,38 +35,32 @@ void compute_primes_up_to_n(int64_t n, std::unordered_set<int64_t> & primes)
 int main()
 {
 	std::unordered_set<int64_t> primes;
-	compute_primes_up_to_n(10000, primes);
+	compute_primes_up_to_n(1000000, primes);
 	long sum {};
+	int count{};
 	for(const auto & element: primes)
 	{
 		if(element < 10)
 			continue;
-		int reverse{};
 		auto number = element;
 		std::vector<long> digits;
 		int exponent{1};
 		bool is_relevant{true};
-		while(number != 0)
+		do
 		{
 			auto digit = number % 10;
 			digits.push_back(digit);
-			for(int i=1; i < digits.size(); ++i)
-			{
-				digit *=10;
-			}
 			number /=10;
-			auto truncated = number - digit;
-			if(primes.find(truncated) == primes.end())
+			if(number > 0 && primes.find(number) == primes.end())
 			{
 				is_relevant = false;
 				break;
 			}
-		}
+		}while(number !=0);
 		if(!is_relevant)
 			continue;
 		int revert_number {};
 
-		std::reverse(digits.begin(), digits.end());
 		exponent = 1;
 		for(const auto & digit : digits)
 		{
@@ -81,8 +75,10 @@ int main()
 		}
 		if(!is_relevant)
 			continue;
-
+		count++;
 		sum += element;
 	}
+
 	std::cout << sum << std::endl;
+	std::cout << count << std::endl;
 }
