@@ -4,6 +4,8 @@
 
 #ifndef COMPUTE_PRIMES_H
 #define COMPUTE_PRIMES_H
+#include <unordered_set>
+#include <vector>
 template<typename T>
 void compute_primes_up_to_n(T n, std::unordered_set<T> & primes)
 {
