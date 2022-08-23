@@ -2,7 +2,9 @@
 // Created by andreas on 23.08.22.
 //
 #include "./../helpers/compute_primes.h"
-#include <algorithm>
+#include "./../helpers/get_permutations.h"
+#include <iostream>
+#include <set>
 
 std::vector<int> get_vector(int n)
 {
@@ -15,45 +17,49 @@ std::vector<int> get_vector(int n)
 	return result;
 }
 
-int to_number(std::vector<int> & digits)
+int to_number(const std::vector<int> & digits)
 {
 	int result{digits[3]};
-	for(int i=0; i < 3; --i)
+	int factor = 1000;
+	for(int i=0; i < 3; ++i)
 	{
-		result = digits[i] * 10 *(3 - i) ;
+		result += digits[i] * factor ;
+		factor /=10;
 	}
 	return result;
 }
+
 
 
 int main()
 {
 	std::unordered_set<int> primes;
 	compute_primes_up_to_n(10000, primes);
-	std::vector<int> result(3, 0);
 	bool done =false;
+	std::set<int> result;
+	int count{};
 	for (int i = 1000; i < 10000; ++i) {
 		if(primes.find(i) != primes.end())
 		{
-
 			auto digits = get_vector(i);
-			int count = 2;
-			result[count] = i;
-			while(true) {
-				if (std::next_permutation(digits.begin(), digits.end())) {
-					if(primes.find(to_number(digits)) != primes.end()) {
-						count--;
-						result[count] = to_number(digits);
-					}
-				}
-				if(!count) {
-					done = true;
+			auto permutations = get_permutations(digits);
+			for(const auto & permutation : permutations)
+			{
+				if(permutation[0] == 0)
 					break;
+				auto number = to_number(permutation);
+				if(primes.find(number) != primes.end() && number > i) {
+					for (const auto & element : permutation)
+						result.insert(number);
 				}
+
 			}
+			if(result.size()==12)
+				count++;
 		}
-		if(done)
-			break;
 	}
+	for(const auto & element: result)
+		std::cout << element << ", ";
+	std::cout << "\n" << count ;
 	return 0;
 }
