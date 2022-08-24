@@ -22,7 +22,7 @@ int main()
 		{
 			auto h = p;
 			std::rotate(h.begin(), h.begin()+i, h.end());
-			if(primes.find(std::stoi(h)) == primes.end())A
+			if(primes.find(std::stoi(h)) == primes.end())
 			{
 				is_circular = false;
 				break;
