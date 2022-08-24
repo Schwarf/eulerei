@@ -35,9 +35,7 @@ bool are_permutations_from_each_other(T number1, T number2 )
 		digit_counter[temp % 10]--;
 		temp /= 10;
 	}
-	if(std::accumulate(digit_counter.begin(), digit_counter.end(), 0) > 0)
-		return false;
-	return true;
+	return std::all_of(digit_counter.cbegin(), digit_counter.cend(), [](int value){return value == 0;});
 }
 
 
