@@ -28,14 +28,16 @@ bool is_power_of(T value)
 		return (value &(value-1)) ==0;
 
 	auto conversion = convert_to_base_ary<base, T>(value);
-	size_t i{2};
 	if(std::count(conversion.begin(), conversion.end(), 1) > 1)
 		return false;
-	while(i < base)
+	// For powers of the 'base' only one '1' in the base-system is allowed (e.g. 20 in ternary is 6 in decimal and not
+	// a power of base 3)
+	size_t digits_in_base{2};
+	while(digits_in_base < base)
 	{
-		if(std::find(conversion.begin(), conversion.end(), i) != conversion.end())
+		if(std::find(conversion.begin(), conversion.end(), digits_in_base) != conversion.end())
 			return false;
-		i++;
+		digits_in_base++;
 	}
 	return true;
 }
