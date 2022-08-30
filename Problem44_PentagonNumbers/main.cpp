@@ -25,13 +25,13 @@ std::unordered_set<long long int> compute_pentagon_numbers(int max )
 int main()
 {
 	std::vector<long long int> help;
-	auto pentagon_numbers = compute_pentagon_numbers(1000);
+	auto pentagon_numbers = compute_pentagon_numbers(3000);
 	help.insert(help.end(), pentagon_numbers.begin(), pentagon_numbers.end());
 	std::sort(help.begin(), help.end());
 	std::vector<long long int> result;
 	for(int i =0; i < help.size() -1; ++i)
 	{
-		for(int j =i+1; j < help.size(); ++j)
+		for(int j =i; j < help.size(); ++j)
 		{
 			auto sum = help[i] + help[j];
 			auto diff = help[j] - help[i];
@@ -41,7 +41,7 @@ int main()
 
 	}
 	auto min = std::min_element(result.begin(), result.end());
-	std::cout << *min  << std::endl;
+	std::cout << *min << std::endl;
 	return 0;
 }
 
