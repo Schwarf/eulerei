@@ -55,6 +55,9 @@ int main()
 		sum += element;
 	}
 
+	std::vector<int> test{-1,2,3,4,4,5};
+	auto b = std::all_of(test.begin()+1, test.end(), [](int x){return x > 0;});
+	std::cout << "All of " << b << std::endl;
 	std::cout << sum << std::endl;
 	std::cout << count << std::endl;
 }
