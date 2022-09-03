@@ -19,6 +19,8 @@ class BigInteger
 {
 public:
 
+	BigInteger() = delete;
+
 	BigInteger(long long initial_value)
 	{
 		if (initial_value < 0) {
@@ -38,6 +40,30 @@ public:
 		is_negative_(is_negative)
 	{
 	}
+	// Copy constructor
+	BigInteger(const BigInteger<number_of_bits> & other)
+	:
+	absolute_value_(other.absolute_value_),
+	is_negative_(other.is_negative_)
+	{
+	}
+
+	// Assignment operators
+	BigInteger & operator=(const BigInteger<number_of_bits> & other)
+	{
+		if(this == other)
+			return *this;
+		absolute_value_ = other.absolute_value_;
+		is_negative_ = other.is_negative_;
+		return *this;
+
+	}
+
+	// Equal operator
+	bool operator==(const BigInteger<number_of_bits>& rhs)
+	{
+		return are_equal(*this, rhs);
+	}
 
 	std::string validate_string_and_determine_sign(const std::string &str)
 	{
@@ -56,7 +82,7 @@ public:
 			is_negative_ = true;
 			first_digit_position = 1;
 		}
-		if (str[first_digit_position] == 0) {
+		if (str[first_digit_position] == '0') {
 			std::cerr << "BigInteger: Leading zero in string detected: " << str << std::endl;
 		}
 		if (!std::all_of(str.cbegin() + first_digit_position, str.cend(), [](char c)
@@ -66,10 +92,24 @@ public:
 		return str.substr(first_digit_position);
 	}
 
+
+
 private:
+
+	bool are_equal(const BigInteger<number_of_bits> & left_hand_side, const BigInteger<number_of_bits> & right_hand_side)
+	{
+		if(left_hand_side.is_negative_ != right_hand_side.is_negative_)
+			return false;
+		for(int i=0; i < number_of_bits; ++i)
+		{
+			if(right_hand_side.absolute_value_[i] != left_hand_side.absolute_value_[i])
+				return false;
+		}
+		return true;
+	}
+
 	std::bitset<number_of_bits> convert_string_to_bitset(const std::string & str)
 	{
-
 		auto absolute_value_string = validate_string_and_determine_sign(str);
 		int digit{};
 		int bit_index{};
