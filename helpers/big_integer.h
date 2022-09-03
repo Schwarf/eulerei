@@ -12,6 +12,8 @@
 #include <iostream>
 #include <array>
 
+constexpr static std::array<int, 10> IS_ODD_DECIMAL_DIGIT_ = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+
 template<size_t number_of_bits>
 class BigInteger
 {
@@ -72,15 +74,18 @@ private:
 		int digit{};
 		int bit_index{};
 		std::bitset<number_of_bits> result;
-		int last_character_index = absolute_value_string.size() - 1;
-		while (last_character_index > -1) {
-			digit =  absolute_value_string[last_character_index--] - '0' ;
-			result[bit_index++] = is_odd_decimal_digit_[digit];
+		while (!absolute_value_string.empty()) {
+			digit =  absolute_value_string.back() - '0' ;
+			// instead of 'modulo 2' operation we just set the bits for odd decimal digits
+			result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
 			absolute_value_string = divide_string_decimal_number_by_2(absolute_value_string);
 		}
 		return result;
 	}
+
+
 	std::string divide_string_decimal_number_by_2(const std::string & input)
+	// we divide starting from the most significant (leftmost) digit
 	{
 		std::string result;
 		int quotient{};
@@ -92,7 +97,7 @@ private:
 		{
 			digit = character -'0';
 			quotient = digit /2 + carry_over_five_or_zero;
-			carry_over_five_or_zero = is_odd_decimal_digit_[digit] ? 5 : 0;
+			carry_over_five_or_zero = IS_ODD_DECIMAL_DIGIT_[digit] ? 5 : 0;
 			result += '0'+quotient;
 		}
 		result.erase(0, result.find_first_not_of('0'));
@@ -101,7 +106,6 @@ private:
 
 	bool is_negative_{false};
 	std::bitset<number_of_bits> absolute_value_;
-	static constexpr std::array<int, 10> is_odd_decimal_digit_{0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 };
 
 
