@@ -1,11 +1,7 @@
 //
-// Created by andreas on 24.08.22.
+// Created by andreas on 03.09.22.
 //
 
-#include "is_power_of.h"
-#include <iostream>
-#include <bitset>
-#include <array>
 
 int main()
 {
