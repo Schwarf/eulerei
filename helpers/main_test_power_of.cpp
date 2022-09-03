@@ -5,6 +5,22 @@
 #include "is_power_of.h"
 #include <iostream>
 #include <bitset>
+#include <array>
+constexpr std::array<char, 10> SX_THE_ODDS{ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
+std::string div2(std::string& dec_value) {
+
+	int carry{};
+	int adder{};
+	std::string remainder{};
+
+	for(auto& ch : dec_value) {
+		carry = (ch - '0') / 2 + adder;
+		adder = SX_THE_ODDS[(ch - '0')] * 5;
+		remainder += '0' + carry;
+	}
+	remainder.erase(0, remainder.find_first_not_of('0'));
+	return remainder;
+}
 int main()
 {
 	int x1=21, x2=12, x3=27;
@@ -36,7 +52,7 @@ int main()
 	}
 	std::cout << result.to_ulong() << std::endl;
 
-
+	std::cout << div2(h) <<std::endl;
 	return 0;
 
 }
