@@ -19,7 +19,10 @@ class BigInteger
 {
 public:
 
-	BigInteger() = delete;
+	explicit BigInteger()
+	{
+		std::bitset<number_of_bits>();
+	}
 
 	explicit BigInteger(long long initial_value)
 	{
@@ -65,10 +68,11 @@ public:
 		return are_equal(*this, rhs);
 	}
 
-	BigInteger<number_of_bits> &operator+(const BigInteger<number_of_bits> &rhs)
+	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
-		addition(this->absolute_value_, rhs.absolute_value_);
+		addition(this->absolute_value_, rhs.absolute_value_, result.absolute_value_);
+		return result;
 	}
 
 	std::string validate_string_and_determine_sign(const std::string &str)
@@ -119,8 +123,8 @@ private:
 	void addition(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2,
 				  std::bitset<number_of_bits> &result)
 	{
-		int carry_over;
-		for(int i=0; i < number_of_bits; ++i)
+		int carry_over{};
+		for(int i=0; i <= number_of_bits; ++i)
 		{
 			result[i] = b1[i] ^ b2[i] ^ carry_over;
 			carry_over = ((b1[i] & b2[i]) | (b1[i] & carry_over)) | (b2[i] & carry_over);
@@ -130,10 +134,10 @@ private:
 	std::string to_decimal_string(std::bitset<number_of_bits> value) {
 		constexpr int base = 10;
 		std::string result{};
-		// Using the doubling method we iterate from left to right. While moving right double
-		// the digit result and if bit is set, add 1.
+		// Using the doubling method we iterate from left to right through the bitset. While moving right doublling
+		// the digit and if bit is set, add 1.
 		// Whenever we are above base=10 we determine the digit by subtracting 10 and set the
-		// remainder
+		// remainder bit.
 		unsigned int digit{};
 		std::bitset<number_of_bits> remainder; // Temp holder of divide value
 		do {
@@ -145,8 +149,6 @@ private:
 				if (digit >= base) {
 					digit -= base;
 					remainder[i] = 1;
-				} else {
-					remainder[i] = 0;
 				}
 			}
 			value = remainder;
