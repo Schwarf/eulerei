@@ -8,10 +8,9 @@ int main()
 	std::string s1{"127"};
 	auto x = BigInteger<20>(s1);
 	auto y = x;
-	auto z = BigInteger<20>("-0127");
-	std::cout << (x==z) << std::endl;
-	std::bitset<4> t(9);
+	auto z = BigInteger<20>("-127");
 
+	std::cout << z.to_number_string() << std::endl;
 
 
 	return 0;

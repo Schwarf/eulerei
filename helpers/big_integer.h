@@ -98,6 +98,14 @@ public:
 		return str.substr(first_digit_position);
 	}
 
+	std::string to_binary_string()  {
+		return absolute_value_.to_string();
+	}
+
+	std::string to_number_string()  {
+		return to_decimal_string(absolute_value_);
+	}
+
 
 private:
 	int first_bit_from_left(const std::bitset<number_of_bits> &value)
@@ -118,6 +126,33 @@ private:
 			carry_over = ((b1[i] & b2[i]) | (b1[i] & carry_over)) | (b2[i] & carry_over);
 		}
 	}
+
+	std::string to_decimal_string(std::bitset<number_of_bits> value) {
+		constexpr int base = 10;
+		std::string result{};
+
+		do {
+			unsigned int remainder{};
+			std::bitset<number_of_bits> division; // Temp holder of divide value
+			// Do the division
+			for(int i = value.size(); i > -1; i--) {
+
+				remainder = remainder * 2 + value[i];
+				if (remainder >= base) {
+					remainder -= base;
+					division[i] = 1;
+				} else {
+					division[i] = 0;
+				}
+			}
+			value = division;
+			result.insert(0, 1, '0' + remainder);
+
+		} while (value.any());
+
+		return (is_negative_ ? "-" + result : result);
+	}
+
 
 	void subtraction(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2)
 	{
