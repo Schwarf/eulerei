@@ -21,7 +21,7 @@ public:
 
 	BigInteger() = delete;
 
-	BigInteger(long long initial_value)
+	explicit BigInteger(long long initial_value)
 	{
 		if (initial_value < 0) {
 			initial_value = -initial_value;
@@ -29,12 +29,12 @@ public:
 		}
 		absolute_value_ = std::bitset<number_of_bits>(initial_value);
 	}
-	BigInteger(const std::string &initial_value)
+	explicit BigInteger(const std::string &initial_value)
 	{
 		absolute_value_ = convert_string_to_bitset(initial_value);
 	}
 
-	BigInteger(const std::bitset<number_of_bits> &initial_absolute_value, bool is_negative)
+	explicit BigInteger(const std::bitset<number_of_bits> &initial_absolute_value, bool is_negative)
 		:
 		absolute_value_(initial_absolute_value),
 		is_negative_(is_negative)
@@ -130,23 +130,27 @@ private:
 	std::string to_decimal_string(std::bitset<number_of_bits> value) {
 		constexpr int base = 10;
 		std::string result{};
-
+		// Using the doubling method we iterate from left to right. While moving right double
+		// the digit result and if bit is set, add 1.
+		// Whenever we are above base=10 we determine the digit by subtracting 10 and set the
+		// remainder
+		unsigned int digit{};
+		std::bitset<number_of_bits> remainder; // Temp holder of divide value
 		do {
-			unsigned int remainder{};
-			std::bitset<number_of_bits> division; // Temp holder of divide value
-			// Do the division
+			digit = 0;
+			remainder.reset();
 			for(int i = value.size(); i > -1; i--) {
 
-				remainder = remainder * 2 + value[i];
-				if (remainder >= base) {
-					remainder -= base;
-					division[i] = 1;
+				digit = digit * 2 + value[i];
+				if (digit >= base) {
+					digit -= base;
+					remainder[i] = 1;
 				} else {
-					division[i] = 0;
+					remainder[i] = 0;
 				}
 			}
-			value = division;
-			result.insert(0, 1, '0' + remainder);
+			value = remainder;
+			result.insert(0, 1, '0' + digit);
 
 		} while (value.any());
 

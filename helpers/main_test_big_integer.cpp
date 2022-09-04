@@ -8,7 +8,7 @@ int main()
 	std::string s1{"127"};
 	auto x = BigInteger<20>(s1);
 	auto y = x;
-	auto z = BigInteger<20>("-127");
+	auto z = BigInteger<5>("11");
 
 	std::cout << z.to_number_string() << std::endl;
 
