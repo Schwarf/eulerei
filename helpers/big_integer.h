@@ -74,32 +74,39 @@ public:
 	std::string validate_string_and_determine_sign(const std::string &str)
 	{
 		if (str.empty()) {
-			std::cerr << "BigInteger: String is empty" << std::endl;
+			throw std::invalid_argument("BigInteger: String is empty");
 		}
 		auto sign = str[0];
 		if (!std::isdigit(sign) && sign != '-') {
-			std::cerr << "BigInteger: First character in string is neither number nor 'minus' sign but: " << str
-					  << std::endl;
+			throw std::invalid_argument("BigInteger: First character in string is neither number nor 'minus' sign but: " + str);
 		}
 		int first_digit_position{};
 		if (sign == '-') {
 			if (str.size() < 2)
-				std::cerr << "BigInteger: String contains only a minus sign: " << str << std::endl;
+				throw std::invalid_argument("BigInteger: String contains only a minus sign: " + str);
 			is_negative_ = true;
 			first_digit_position = 1;
 		}
 		if (str[first_digit_position] == '0') {
-			std::cerr << "BigInteger: Leading zero in string detected: " << str << std::endl;
+			throw std::invalid_argument("BigInteger: Leading zero in string detected: " + str);
 		}
 		if (!std::all_of(str.cbegin() + first_digit_position, str.cend(), [](char c)
 		{ return std::isdigit(c); })) {
-			std::cerr << "BigInteger: String contains non-numeric values: " << str << std::endl;
+			throw std::invalid_argument("BigInteger: String contains non-numeric values: " + str);
 		}
 		return str.substr(first_digit_position);
 	}
 
 
 private:
+	int first_bit_from_left(const std::bitset<number_of_bits>& value) {
+		int index = value.size() - 1;
+		while(index > -1&& !value.test(index))
+			index--;
+		return index;
+	}
+
+
 
 	void addition(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2,
 				  std::bitset<number_of_bits> &result)
@@ -113,6 +120,11 @@ private:
 			b2 = std::move(carry_over);
 		}
 		result = std::move(b1);
+	}
+
+	void subtraction(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2)
+	{
+
 	}
 
 	bool are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)

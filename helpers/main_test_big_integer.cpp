@@ -10,5 +10,9 @@ int main()
 	auto y = x;
 	auto z = BigInteger<20>("-0127");
 	std::cout << (x==z) << std::endl;
+	std::bitset<4> t(9);
+
+
+
 	return 0;
 }
