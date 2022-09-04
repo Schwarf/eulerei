@@ -78,7 +78,8 @@ public:
 		}
 		auto sign = str[0];
 		if (!std::isdigit(sign) && sign != '-') {
-			throw std::invalid_argument("BigInteger: First character in string is neither number nor 'minus' sign but: " + str);
+			throw std::invalid_argument(
+				"BigInteger: First character in string is neither number nor 'minus' sign but: " + str);
 		}
 		int first_digit_position{};
 		if (sign == '-') {
@@ -99,27 +100,23 @@ public:
 
 
 private:
-	int first_bit_from_left(const std::bitset<number_of_bits>& value) {
+	int first_bit_from_left(const std::bitset<number_of_bits> &value)
+	{
 		int index = value.size() - 1;
-		while(index > -1&& !value.test(index))
+		while (index > -1 && !value.test(index))
 			index--;
 		return index;
 	}
 
-
-
 	void addition(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2,
 				  std::bitset<number_of_bits> &result)
 	{
-		std::bitset<number_of_bits> carry_over;
-		while (b1.any()) {
-			carry_over = b1;
-			carry_over &= b2;
-			carry_over <<= 1;
-			b1 ^= b2;
-			b2 = std::move(carry_over);
+		int carry_over;
+		for(int i=0; i < number_of_bits; ++i)
+		{
+			result[i] = b1[i] ^ b2[i] ^ carry_over;
+			carry_over = ((b1[i] & b2[i]) | (b1[i] & carry_over)) | (b2[i] & carry_over);
 		}
-		result = std::move(b1);
 	}
 
 	void subtraction(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2)
