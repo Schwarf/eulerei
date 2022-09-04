@@ -14,6 +14,7 @@
 
 constexpr static std::array<int, 10> IS_ODD_DECIMAL_DIGIT_ = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
+// We work with 2's complement binary representation
 template<size_t number_of_bits>
 class BigInteger
 {
@@ -30,23 +31,24 @@ public:
 			initial_value = -initial_value;
 			is_negative_ = true;
 		}
-		absolute_value_ = std::bitset<number_of_bits>(initial_value);
+		two_complement_value_ = std::bitset<number_of_bits>(initial_value);
 	}
-	explicit BigInteger(const std::string &initial_value)
+	explicit BigInteger(const std::string &value)
 	{
-		absolute_value_ = convert_string_to_bitset(initial_value);
+		two_complement_value_ = convert_string_to_bitset(value);
 	}
 
-	explicit BigInteger(const std::bitset<number_of_bits> &initial_absolute_value, bool is_negative)
+	explicit BigInteger(const std::bitset<number_of_bits> &initial_value)
 		:
-		absolute_value_(initial_absolute_value),
-		is_negative_(is_negative)
+		two_complement_value_(initial_value),
+		is_negative_(initial_value[number_of_bits -1])
 	{
+
 	}
 	// Copy constructor
 	BigInteger(const BigInteger<number_of_bits> &other)
 		:
-		absolute_value_(other.absolute_value_),
+		two_complement_value_(other.two_complement_value_),
 		is_negative_(other.is_negative_)
 	{
 	}
@@ -56,7 +58,7 @@ public:
 	{
 		if (this == other)
 			return *this;
-		absolute_value_ = other.absolute_value_;
+		two_complement_value_ = other.two_complement_value_;
 		is_negative_ = other.is_negative_;
 		return *this;
 
@@ -71,14 +73,14 @@ public:
 	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
 	{
 		BigInteger<number_of_bits> result;
-		subtraction(this->absolute_value_, subtrahend.absolute_value_, result.absolute_value_);
+		subtraction(this->two_complement_value_, subtrahend.two_complement_value_, result.two_complement_value_);
 		return result;
 	}
 
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
-		addition(this->absolute_value_, rhs.absolute_value_, result.absolute_value_);
+		addition(this->two_complement_value_, rhs.two_complement_value_, result.two_complement_value_);
 		return result;
 	}
 
@@ -111,12 +113,12 @@ public:
 
 	std::string to_binary_string()
 	{
-		return absolute_value_.to_string();
+		return two_complement_value_.to_string();
 	}
 
 	std::string to_number_string()
 	{
-		return to_decimal_string(absolute_value_);
+		return to_decimal_string(two_complement_value_);
 	}
 
 
@@ -133,11 +135,7 @@ private:
 	void addition(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2,
 				  std::bitset<number_of_bits> &result)
 	{
-		int carry_over{};
-		for (int i = 0; i <= number_of_bits; ++i) {
-			result[i] = b1[i] ^ b2[i] ^ carry_over;
-			carry_over = ((b1[i] & b2[i]) | (b1[i] & carry_over)) | (b2[i] & carry_over);
-		}
+
 	}
 
 
@@ -184,25 +182,28 @@ private:
 		if (left_hand_side.is_negative_ != right_hand_side.is_negative_)
 			return false;
 		for (int i = 0; i < number_of_bits; ++i) {
-			if (right_hand_side.absolute_value_[i] != left_hand_side.absolute_value_[i])
+			if (right_hand_side.two_complement_value_[i] != left_hand_side.two_complement_value_[i])
 				return false;
 		}
 		return true;
 	}
 
+	// We work with 2's complement binary representation. Leading bit is sign bit.
 	std::bitset<number_of_bits> convert_string_to_bitset(const std::string &str)
 	{
 		auto absolute_value_string = validate_string_and_determine_sign(str);
 		int digit{};
 		int bit_index{};
-		std::bitset<number_of_bits> result;
+		std::bitset<number_of_bits> two_complement_result;
 		while (!absolute_value_string.empty()) {
 			digit = absolute_value_string.back() - '0';
 			// instead of 'modulo 2' operation we just set the bits for odd decimal digits
-			result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
+			two_complement_result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
 			absolute_value_string = divide_string_decimal_number_by_2(absolute_value_string);
 		}
-		return result;
+		if(is_negative_)
+			addition(~two_complement_result, one, two_complement_result);
+		return two_complement_result;
 	}
 
 	std::string divide_string_decimal_number_by_2(const std::string &input)
@@ -225,7 +226,7 @@ private:
 	}
 
 	bool is_negative_{false};
-	std::bitset<number_of_bits> absolute_value_;
+	std::bitset<number_of_bits> two_complement_value_;
 };
 
 
