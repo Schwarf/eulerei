@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "./../../big_integer.h"
 
-class SetupBigIntegers: public testing::Test
+class SetupBigIntegersAddition: public testing::Test
 {
 protected:
 	std::string big_number1{"9278118309180938109380983109"};
@@ -22,20 +22,20 @@ protected:
 
 };
 
-TEST_F(SetupBigIntegers, test_addition_big_number1_plus_big_number2)
+TEST_F(SetupBigIntegersAddition, test_addition_big_number1_plus_big_number2)
 {
 	auto result = big_int1 + big_int2;
 	EXPECT_TRUE(result.to_number_string() == big_number1_plus_2);
 }
 
-TEST_F(SetupBigIntegers, test_addition_big_number2_plus_big_number3)
+TEST_F(SetupBigIntegersAddition, test_addition_big_number2_plus_big_number3)
 {
 	auto result = big_int2 + big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_number2_plus_3);
 }
 
 
-TEST_F(SetupBigIntegers, test_addition_number1_plus_number2)
+TEST_F(SetupBigIntegersAddition, test_addition_number1_plus_number2)
 {
 	auto result = BigInteger<10>(number1) + BigInteger<10>(number2) ;
 	EXPECT_TRUE(result.to_number_string() == number1_plus_number2);

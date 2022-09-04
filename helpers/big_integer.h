@@ -63,6 +63,10 @@ public:
 		return *this;
 
 	}
+	bool is_negative()
+	{
+		return is_negative_;
+	}
 
 	// Equal operator
 	bool operator==(const BigInteger<number_of_bits> &rhs)
