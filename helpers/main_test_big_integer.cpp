@@ -15,5 +15,9 @@ int main()
 	auto y = x+z;
 	std::cout << (y.to_number_string()) << std::endl;
 
+	auto t1 = BigInteger<10>("17");
+	auto t2 = BigInteger<10>("9");
+	auto e1 = t1 - t2;
+	std::cout << "e1 = " << e1.to_number_string() << std::endl;
 	return 0;
 }

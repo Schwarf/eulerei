@@ -17,6 +17,7 @@ std::vector<std::vector<std::string>> read_csv_file(std::string full_path_to_fil
 	std::string line;
 	std::vector<std::string> row;
 	std::string word;
+	char delimiter = ',';
 	if(!file.is_open())
 		std::cout << "Could not open file" << std::endl;
 
@@ -24,7 +25,7 @@ std::vector<std::vector<std::string>> read_csv_file(std::string full_path_to_fil
 	{
 		row.clear();
 		std::stringstream stream(line);
-		while(std::getline(stream, word, ','))
+		while(std::getline(stream, word, delimiter))
 			row.push_back(word);
 		file_content.push_back(row);
 	}

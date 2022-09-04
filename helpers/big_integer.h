@@ -68,6 +68,13 @@ public:
 		return are_equal(*this, rhs);
 	}
 
+	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
+	{
+		BigInteger<number_of_bits> result;
+		subtraction(this->absolute_value_, subtrahend.absolute_value_, result.absolute_value_);
+		return result;
+	}
+
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
@@ -102,16 +109,19 @@ public:
 		return str.substr(first_digit_position);
 	}
 
-	std::string to_binary_string()  {
+	std::string to_binary_string()
+	{
 		return absolute_value_.to_string();
 	}
 
-	std::string to_number_string()  {
+	std::string to_number_string()
+	{
 		return to_decimal_string(absolute_value_);
 	}
 
 
 private:
+	inline static const auto one = std::bitset<number_of_bits>(1);
 	int first_bit_from_left(const std::bitset<number_of_bits> &value)
 	{
 		int index = value.size() - 1;
@@ -124,14 +134,23 @@ private:
 				  std::bitset<number_of_bits> &result)
 	{
 		int carry_over{};
-		for(int i=0; i <= number_of_bits; ++i)
-		{
+		for (int i = 0; i <= number_of_bits; ++i) {
 			result[i] = b1[i] ^ b2[i] ^ carry_over;
 			carry_over = ((b1[i] & b2[i]) | (b1[i] & carry_over)) | (b2[i] & carry_over);
 		}
 	}
 
-	std::string to_decimal_string(std::bitset<number_of_bits> value) {
+
+	void subtraction(std::bitset<number_of_bits> minuend,
+					 std::bitset<number_of_bits> subtrahend,
+					 std::bitset<number_of_bits> &difference)
+	{
+		addition(~subtrahend, one, difference);
+		addition(difference, minuend, difference);
+	}
+
+	std::string to_decimal_string(std::bitset<number_of_bits> value)
+	{
 		constexpr int base = 10;
 		std::string result{};
 		// Using the doubling method we iterate from left to right through the bitset. While moving right doublling
@@ -143,7 +162,7 @@ private:
 		do {
 			digit = 0;
 			remainder.reset();
-			for(int i = value.size(); i > -1; i--) {
+			for (int i = value.size(); i > -1; i--) {
 
 				digit = digit * 2 + value[i];
 				if (digit >= base) {
@@ -154,15 +173,10 @@ private:
 			value = remainder;
 			result.insert(0, 1, '0' + digit);
 
-		} while (value.any());
+		}
+		while (value.any());
 
 		return (is_negative_ ? "-" + result : result);
-	}
-
-
-	void subtraction(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2)
-	{
-
 	}
 
 	bool are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)

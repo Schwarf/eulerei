@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
-project(problem27)
-project(problem29)
-set(CMAKE_CXX_STANDARD 14)
+project(euler_project)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(problem21 Problem21_Amicable_Numbers/main.cpp)
 add_executable(problem22 Problem22_NamesScores/main.cpp)
