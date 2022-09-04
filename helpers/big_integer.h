@@ -132,10 +132,17 @@ private:
 		return index;
 	}
 
-	void addition(std::bitset<number_of_bits> b1, std::bitset<number_of_bits> b2,
-				  std::bitset<number_of_bits> &result)
+	void addition(std::bitset<number_of_bits> addend1, std::bitset<number_of_bits> addend2,
+				  std::bitset<number_of_bits> &sum)
 	{
-
+		std::bitset<number_of_bits> carry_over;
+		while(addend2.any())
+		{
+			carry_over = (addend1 & addend2) <<1;
+			addend1 ^= addend2;
+			addend2 = std::move(carry_over);
+		}
+		sum = std::move(addend1);
 	}
 
 

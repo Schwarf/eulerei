@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(euler_project)
 set(CMAKE_CXX_STANDARD 17)
 
+add_subdirectory(helpers/test)
 add_executable(problem21 Problem21_Amicable_Numbers/main.cpp)
 add_executable(problem22 Problem22_NamesScores/main.cpp)
 add_executable(problem27 Problem27_QuadraticPrimes/main.cpp)
