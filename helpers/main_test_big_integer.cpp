@@ -18,6 +18,9 @@ int main()
 	auto t1 = BigInteger<10>("17");
 	auto t2 = BigInteger<10>("9");
 	auto e1 = t1 - t2;
-	std::cout << "e1 = " << e1.to_number_string() << std::endl;
+	std::bitset<10> f(-25);
+	std::cout << "t1 = " << f.size()<< std::endl;
+	std::cout << f.to_string() << std::endl;
+	std::cout << f[9] << std::endl;
 	return 0;
 }

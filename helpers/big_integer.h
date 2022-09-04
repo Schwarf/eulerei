@@ -160,7 +160,7 @@ private:
 		do {
 			digit = 0;
 			remainder.reset();
-			for (int i = value.size(); i > -1; i--) {
+			for (int i = value.size()-1; i > -1; --i) {
 
 				digit = digit * 2 + value[i];
 				if (digit >= base) {
