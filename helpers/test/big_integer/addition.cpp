@@ -41,3 +41,17 @@ TEST_F(SetupBigIntegersAddition, test_addition_number1_plus_number2)
 	EXPECT_TRUE(result.to_number_string() == number1_plus_number2);
 }
 
+
+TEST_F(SetupBigIntegersAddition, test_many_simple_numbers_via_string)
+{
+	int start{10000000};
+	auto addend1 = BigInteger<64>(start);
+	for (int i = 1; i < 1000; ++i)
+	{
+		auto string = std::to_string(i);
+		auto addend2 = BigInteger<64>(string);
+		auto sum = addend1+addend2;
+		EXPECT_TRUE(sum.to_number_string() == std::to_string(i+start));
+	}
+}
+
