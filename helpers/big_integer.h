@@ -147,6 +147,13 @@ private:
 		addition(difference, minuend, difference);
 	}
 
+	void multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
+						std::bitset<number_of_bits> &product)
+	{
+
+
+	}
+
 	std::string to_decimal_string(std::bitset<number_of_bits> value)
 	{
 		constexpr int base = 10;
