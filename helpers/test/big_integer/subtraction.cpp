@@ -10,10 +10,13 @@ protected:
 	std::string big_number1{"9278118309180938109380983109"};
 	std::string big_number2{"2342349278113243248309180938234234109380983109572387399309213"};
 	std::string big_number3{"99985092384309223098482340923184482309480342341093809831372189479238438579"};
+	std::string big_number4{"-99985092384309223098482340923184482309480342341093809831372189479238438579"};
 	std::string big_number1_minus_2{"-2342349278113243248309180938234224831262673928634278018326104"};
 	std::string big_number2_minus_1{"2342349278113243248309180938234224831262673928634278018326104"};
 	std::string big_number2_minus_3{"-99985092384306880749204227679936173128542108106984428848262617091839129366"};
 	std::string big_number3_minus_2{"99985092384306880749204227679936173128542108106984428848262617091839129366"};
+	std::string big_number3_minus_4 {"0"};
+	std::string big_number4_minus_3 {"-199970184768618446196964681846368964618960684682187619662744378958476877158"};
 	std::string number1{"17"};
 	std::string number2{"9"};
 	std::string number1_minus_number2{"8"};
@@ -21,6 +24,7 @@ protected:
 	BigInteger<1000> big_int1 = BigInteger<1000>(big_number1);
 	BigInteger<1000> big_int2 = BigInteger<1000>(big_number2);
 	BigInteger<1000> big_int3 = BigInteger<1000>(big_number3);
+	BigInteger<1000> big_int4 = BigInteger<1000>(big_number4);
 
 };
 
@@ -48,4 +52,15 @@ TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number2_minus_big_numbe
 	EXPECT_TRUE(result.to_number_string() == big_number2_minus_3);
 	result = big_int3 - big_int2;
 	EXPECT_TRUE(result.to_number_string() == big_number3_minus_2);
+}
+
+TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number3_minus_big_number4)
+{
+	auto result = big_int3 + big_int4 ;
+	EXPECT_TRUE(result.to_number_string() == big_number3_minus_4);
+	result = big_int4 - big_int3;
+	EXPECT_TRUE(result.to_number_string() == big_number4_minus_3);
+	result = big_int4 + big_int3;
+	EXPECT_TRUE(result.to_number_string() == big_number3_minus_4);
+
 }
