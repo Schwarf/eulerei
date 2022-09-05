@@ -27,10 +27,6 @@ public:
 
 	explicit BigInteger(long long initial_value)
 	{
-		if (initial_value < 0) {
-			initial_value = -initial_value;
-			is_negative_ = true;
-		}
 		two_complement_value_ = std::bitset<number_of_bits>(initial_value);
 	}
 	explicit BigInteger(const std::string &value)
@@ -40,16 +36,14 @@ public:
 
 	explicit BigInteger(const std::bitset<number_of_bits> &initial_value)
 		:
-		two_complement_value_(initial_value),
-		is_negative_(initial_value[number_of_bits -1])
+		two_complement_value_(initial_value)
 	{
 
 	}
 	// Copy constructor
 	BigInteger(const BigInteger<number_of_bits> &other)
 		:
-		two_complement_value_(other.two_complement_value_),
-		is_negative_(other.is_negative_)
+		two_complement_value_(other.two_complement_value_)
 	{
 	}
 
@@ -57,13 +51,12 @@ public:
 	BigInteger &operator=(const BigInteger<number_of_bits> &other)
 	{
 		two_complement_value_ = other.two_complement_value_;
-		is_negative_ = other.is_negative_;
 		return *this;
 
 	}
 	bool is_negative()
 	{
-		return is_negative_;
+		return two_complement_value_[number_of_bits - 1];
 	}
 
 	// Equal operator
@@ -100,7 +93,7 @@ public:
 		if (sign == '-') {
 			if (str.size() < 2)
 				throw std::invalid_argument("BigInteger: String contains only a minus sign: " + str);
-			is_negative_ = true;
+			has_negative_sign_ = true;
 			first_digit_position = 1;
 		}
 		if (str[first_digit_position] == '0') {
@@ -138,15 +131,13 @@ private:
 				  std::bitset<number_of_bits> &sum)
 	{
 		std::bitset<number_of_bits> carry_over;
-		while(addend2.any())
-		{
-			carry_over = (addend1 & addend2) <<1;
+		while (addend2.any()) {
+			carry_over = (addend1 & addend2) << 1;
 			addend1 ^= addend2;
 			addend2 = std::move(carry_over);
 		}
 		sum = std::move(addend1);
 	}
-
 
 	void subtraction(std::bitset<number_of_bits> minuend,
 					 std::bitset<number_of_bits> subtrahend,
@@ -160,16 +151,20 @@ private:
 	{
 		constexpr int base = 10;
 		std::string result{};
-		// Using the doubling method we iterate from left to right through the bitset. While moving right doublling
+		if(is_negative())
+		{
+			addition(~value, std::bitset<number_of_bits>(1), value);
+		}
+		// Using the doubling method we iterate from left to right through the bitset. While moving right doubling
 		// the digit and if bit is set, add 1.
-		// Whenever we are above base=10 we determine the digit by subtracting 10 and set the
+		// Whenever we are above-equal base=10 we determine the digit by subtracting 10 and set the
 		// remainder bit.
 		unsigned int digit{};
 		std::bitset<number_of_bits> remainder; // Temp holder of divide value
 		do {
 			digit = 0;
 			remainder.reset();
-			for (int i = value.size()-1; i > -1; --i) {
+			for (int i = value.size() - 1; i > -1; --i) {
 
 				digit = digit * 2 + value[i];
 				if (digit >= base) {
@@ -183,12 +178,12 @@ private:
 		}
 		while (value.any());
 
-		return (is_negative_ ? "-" + result : result);
+		return (is_negative() ? "-" + result : result);
 	}
 
 	bool are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)
 	{
-		if (left_hand_side.is_negative_ != right_hand_side.is_negative_)
+		if (left_hand_side.has_negative_sign_ != right_hand_side.has_negative_sign_)
 			return false;
 		for (int i = 0; i < number_of_bits; ++i) {
 			if (right_hand_side.two_complement_value_[i] != left_hand_side.two_complement_value_[i])
@@ -210,7 +205,7 @@ private:
 			two_complement_result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
 			absolute_value_string = divide_string_decimal_number_by_2(absolute_value_string);
 		}
-		if(is_negative_)
+		if (has_negative_sign_)
 			addition(~two_complement_result, one, two_complement_result);
 		return two_complement_result;
 	}
@@ -235,7 +230,7 @@ private:
 		return result;
 	}
 
-	bool is_negative_{false};
+	bool has_negative_sign_{false};
 	std::bitset<number_of_bits> two_complement_value_;
 };
 

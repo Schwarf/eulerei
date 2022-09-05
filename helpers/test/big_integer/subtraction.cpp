@@ -28,6 +28,6 @@ TEST_F(SetupBigIntegersSubtraction, test_addition_number1_minus_number2)
 	auto result = BigInteger<10>(number1) - BigInteger<10>(number2) ;
 	EXPECT_TRUE(result.to_number_string() == number1_minus_number2);
 	result = BigInteger<10>(number2) - BigInteger<10>(number1);\
-	std::cout << result.to_binary_string() << std::endl;
 	EXPECT_TRUE(result.to_number_string() == number2_minus_number1);
 }
+
