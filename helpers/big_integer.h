@@ -224,15 +224,16 @@ private:
 		int quotient{};
 		// if we divide e.g. {10, 30, 50, 70, 90,} we get {5, 15, ... } with a 5 on the following digit.
 		// for {0, 20, 40, ...} this is not the case
+		char zero_char = '0';
 		int carry_over_five_or_zero{};
 		int digit{};
 		for (const auto &character: input) {
-			digit = character - '0';
+			digit = character - zero_char;
 			quotient = digit / 2 + carry_over_five_or_zero;
 			carry_over_five_or_zero = IS_ODD_DECIMAL_DIGIT_[digit] ? 5 : 0;
-			result += '0' + quotient;
+			result += zero_char + quotient;
 		}
-		result.erase(0, result.find_first_not_of('0'));
+		result.erase(0, result.find_first_not_of(zero_char));
 		return result;
 	}
 
