@@ -56,8 +56,6 @@ public:
 	// Assignment operators
 	BigInteger &operator=(const BigInteger<number_of_bits> &other)
 	{
-		if (this == other)
-			return *this;
 		two_complement_value_ = other.two_complement_value_;
 		is_negative_ = other.is_negative_;
 		return *this;
@@ -76,9 +74,9 @@ public:
 
 	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
 	{
-		BigInteger<number_of_bits> result;
-		subtraction(this->two_complement_value_, subtrahend.two_complement_value_, result.two_complement_value_);
-		return result;
+		BigInteger<number_of_bits> difference;
+		subtraction(this->two_complement_value_, subtrahend.two_complement_value_, difference.two_complement_value_);
+		return difference;
 	}
 
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
