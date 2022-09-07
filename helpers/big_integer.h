@@ -167,23 +167,27 @@ private:
 
 	// We use Booth's algorithm
 	void multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
-						std::bitset<number_of_bits> &product)
+						std::bitset<number_of_bits> &result)
 	{
-		bool last_bit{};
-		bool most_significand_bit{};
+		bool last_cycle_bit{false};
+		std::bitset<number_of_bits> product;
+		bool most_significand_bit{false};
 		for (int index = 0; index < number_of_bits; ++index) {
-			if (multiplier[index] && !last_bit)
+			if (multiplier[0] && !last_cycle_bit)
 				subtraction(product, multiplicand, product);
-			else if (!multiplier[index] && last_bit)
+			else if (!multiplier[0] && last_cycle_bit)
 				addition(product, multiplicand, product);
 			most_significand_bit = product[number_of_bits -1];
-			last_bit = multiplier[index];
+			last_cycle_bit = multiplier[0];
+
 			multiplier >>= 1;
 			multiplier[number_of_bits-1] = product[0];
 			product >>=1;
 			product[number_of_bits-1] = most_significand_bit;
+
 		}
 		product = multiplier;
+		result= product;
 	}
 
 	std::string to_decimal_string(std::bitset<number_of_bits> value)
