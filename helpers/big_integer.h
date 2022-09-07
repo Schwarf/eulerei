@@ -27,36 +27,36 @@ public:
 
 	explicit BigInteger(long long initial_value)
 	{
-		two_complement_value_ = std::bitset<number_of_bits>(initial_value);
+		value_in_twos_complement_representation_ = std::bitset<number_of_bits>(initial_value);
 	}
 	explicit BigInteger(const std::string &value)
 	{
-		two_complement_value_ = convert_string_to_bitset(value);
+		value_in_twos_complement_representation_ = convert_string_to_bitset(value);
 	}
 
 	explicit BigInteger(const std::bitset<number_of_bits> &initial_value)
 		:
-		two_complement_value_(initial_value)
+		value_in_twos_complement_representation_(initial_value)
 	{
 
 	}
 	// Copy constructor
 	BigInteger(const BigInteger<number_of_bits> &other)
 		:
-		two_complement_value_(other.two_complement_value_)
+		value_in_twos_complement_representation_(other.value_in_twos_complement_representation_)
 	{
 	}
 
 	// Assignment operators
 	BigInteger &operator=(const BigInteger<number_of_bits> &other)
 	{
-		two_complement_value_ = other.two_complement_value_;
+		value_in_twos_complement_representation_ = other.value_in_twos_complement_representation_;
 		return *this;
 
 	}
 	bool is_negative()
 	{
-		return two_complement_value_[number_of_bits - 1];
+		return value_in_twos_complement_representation_[number_of_bits - 1];
 	}
 
 	// Equal operator
@@ -68,14 +68,14 @@ public:
 	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
 	{
 		BigInteger<number_of_bits> difference;
-		subtraction(this->two_complement_value_, subtrahend.two_complement_value_, difference.two_complement_value_);
+		subtraction(this->value_in_twos_complement_representation_, subtrahend.value_in_twos_complement_representation_, difference.value_in_twos_complement_representation_);
 		return difference;
 	}
 
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
-		addition(this->two_complement_value_, rhs.two_complement_value_, result.two_complement_value_);
+		addition(this->value_in_twos_complement_representation_, rhs.value_in_twos_complement_representation_, result.value_in_twos_complement_representation_);
 		return result;
 	}
 
@@ -108,17 +108,17 @@ public:
 
 	std::string to_binary_string()
 	{
-		return two_complement_value_.to_string();
+		return value_in_twos_complement_representation_.to_string();
 	}
 
 	std::string to_number_string()
 	{
-		return to_decimal_string(two_complement_value_);
+		return to_decimal_string(value_in_twos_complement_representation_);
 	}
 
 
 private:
-	inline static const auto one = std::bitset<number_of_bits>(1);
+	inline static const auto binary_one = std::bitset<number_of_bits>(1);
 	int first_bit_from_left(const std::bitset<number_of_bits> &value)
 	{
 		int index = value.size() - 1;
@@ -139,14 +139,21 @@ private:
 		sum = std::move(addend1);
 	}
 
+	void get_twos_complement(std::bitset<number_of_bits> & value)
+	{
+		addition(~value, binary_one, value);
+	}
+
+
 	void subtraction(std::bitset<number_of_bits> minuend,
 					 std::bitset<number_of_bits> subtrahend,
 					 std::bitset<number_of_bits> &difference)
 	{
-		addition(~subtrahend, one, difference);
-		addition(difference, minuend, difference);
+		get_twos_complement(subtrahend);
+		addition(subtrahend, minuend, difference);
 	}
 
+	// We use Booth's algorithm
 	void multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
 						std::bitset<number_of_bits> &product)
 	{
@@ -160,7 +167,7 @@ private:
 		std::string result{};
 		if(is_negative())
 		{
-			addition(~value, std::bitset<number_of_bits>(1), value);
+			get_twos_complement(value);
 		}
 		// Using the doubling method we iterate from left to right through the bitset. While moving right doubling
 		// the digit and if bit is set, add 1.
@@ -193,7 +200,7 @@ private:
 		if (left_hand_side.has_negative_sign_ != right_hand_side.has_negative_sign_)
 			return false;
 		for (int i = 0; i < number_of_bits; ++i) {
-			if (right_hand_side.two_complement_value_[i] != left_hand_side.two_complement_value_[i])
+			if (right_hand_side.value_in_twos_complement_representation_[i] != left_hand_side.value_in_twos_complement_representation_[i])
 				return false;
 		}
 		return true;
@@ -205,16 +212,16 @@ private:
 		auto absolute_value_string = validate_string_and_determine_sign(str);
 		int digit{};
 		int bit_index{};
-		std::bitset<number_of_bits> two_complement_result;
+		std::bitset<number_of_bits> result;
 		while (!absolute_value_string.empty()) {
 			digit = absolute_value_string.back() - '0';
 			// instead of 'modulo 2' operation we just set the bits for odd decimal digits
-			two_complement_result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
+			result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
 			absolute_value_string = divide_string_decimal_number_by_2(absolute_value_string);
 		}
 		if (has_negative_sign_)
-			addition(~two_complement_result, one, two_complement_result);
-		return two_complement_result;
+			get_twos_complement(result);
+		return result;
 	}
 
 	std::string divide_string_decimal_number_by_2(const std::string &input)
@@ -238,7 +245,7 @@ private:
 	}
 
 	bool has_negative_sign_{false};
-	std::bitset<number_of_bits> two_complement_value_;
+	std::bitset<number_of_bits> value_in_twos_complement_representation_;
 };
 
 

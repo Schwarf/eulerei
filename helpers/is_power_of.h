@@ -30,7 +30,7 @@ bool is_power_of(T value)
 	auto conversion = convert_to_base_ary<base, T>(value);
 	if(std::count(conversion.begin(), conversion.end(), 1) > 1)
 		return false;
-	// For powers of the 'base' only one '1' in the base-system is allowed (e.g. 20 in ternary is 6 in decimal and not
+	// For powers of the 'base' only binary_one '1' in the base-system is allowed (e.g. 20 in ternary is 6 in decimal and not
 	// a power of base 3)
 	size_t digits_in_base{2};
 	while(digits_in_base < base)
