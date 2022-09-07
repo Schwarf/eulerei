@@ -49,6 +49,6 @@ long sum(const char *file_name)
 	{
 
 
-		std::cout << sum("/media/linux_data/projects/cpp/eulerei/Problem22_NamesScores/names.txt") << std::endl;
+		std::cout << sum("/media/linux_data/projects/cpp/eulerei/Problem22_NamesScores/names.text") << std::endl;
 		return 0;
 	}

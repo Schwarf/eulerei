@@ -5,7 +5,7 @@
 #include <unordered_set>
 int main()
 {
-	std::string full_file_path("/media/linux_data/projects/cpp/eulerei/Problem42_Coded_Triangle_Numbers/p042_words.txt");
+	std::string full_file_path("/media/linux_data/projects/cpp/eulerei/Problem42_Coded_Triangle_Numbers/p042_words.text");
 	auto result = read_csv_file(full_file_path);
 	std::unordered_set<int> triangle_values;
 	for(int i=1; i < 1000; ++i)
