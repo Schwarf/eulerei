@@ -68,14 +68,27 @@ public:
 	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
 	{
 		BigInteger<number_of_bits> difference;
-		subtraction(this->value_in_twos_complement_representation_, subtrahend.value_in_twos_complement_representation_, difference.value_in_twos_complement_representation_);
+		subtraction(this->value_in_twos_complement_representation_,
+					subtrahend.value_in_twos_complement_representation_,
+					difference.value_in_twos_complement_representation_);
 		return difference;
 	}
 
-	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &rhs)
+	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &multiplier)
+	{
+		BigInteger<number_of_bits> product;
+		addition(this->value_in_twos_complement_representation_,
+				 multiplier.value_in_twos_complement_representation_,
+				 product.value_in_twos_complement_representation_);
+		return product;
+	}
+
+	BigInteger<number_of_bits> operator*(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
-		addition(this->value_in_twos_complement_representation_, rhs.value_in_twos_complement_representation_, result.value_in_twos_complement_representation_);
+		multiplication(this->value_in_twos_complement_representation_,
+					   rhs.value_in_twos_complement_representation_,
+					   result.value_in_twos_complement_representation_);
 		return result;
 	}
 
@@ -139,34 +152,45 @@ private:
 		sum = std::move(addend1);
 	}
 
-	void get_twos_complement(std::bitset<number_of_bits> & value)
+	void get_twos_complement(std::bitset<number_of_bits> &value)
 	{
 		addition(~value, binary_one, value);
 	}
-
 
 	void subtraction(std::bitset<number_of_bits> minuend,
 					 std::bitset<number_of_bits> subtrahend,
 					 std::bitset<number_of_bits> &difference)
 	{
 		get_twos_complement(subtrahend);
-		addition(subtrahend, minuend, difference);
+		addition(minuend, subtrahend, difference);
 	}
 
 	// We use Booth's algorithm
 	void multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
 						std::bitset<number_of_bits> &product)
 	{
-
-
+		bool last_bit{};
+		bool most_significand_bit{};
+		for (int index = 0; index < number_of_bits; ++index) {
+			if (multiplier[index] && !last_bit)
+				subtraction(product, multiplicand, product);
+			else if (!multiplier[index] && last_bit)
+				addition(product, multiplicand, product);
+			most_significand_bit = product[number_of_bits -1];
+			last_bit = multiplier[index];
+			multiplier >>= 1;
+			multiplier[number_of_bits-1] = product[0];
+			product >>=1;
+			product[number_of_bits-1] = most_significand_bit;
+		}
+		product = multiplier;
 	}
 
 	std::string to_decimal_string(std::bitset<number_of_bits> value)
 	{
 		constexpr int base = 10;
 		std::string result{};
-		if(is_negative())
-		{
+		if (is_negative()) {
 			get_twos_complement(value);
 		}
 		// Using the doubling method we iterate from left to right through the bitset. While moving right doubling
@@ -200,7 +224,8 @@ private:
 		if (left_hand_side.has_negative_sign_ != right_hand_side.has_negative_sign_)
 			return false;
 		for (int i = 0; i < number_of_bits; ++i) {
-			if (right_hand_side.value_in_twos_complement_representation_[i] != left_hand_side.value_in_twos_complement_representation_[i])
+			if (right_hand_side.value_in_twos_complement_representation_[i]
+				!= left_hand_side.value_in_twos_complement_representation_[i])
 				return false;
 		}
 		return true;
