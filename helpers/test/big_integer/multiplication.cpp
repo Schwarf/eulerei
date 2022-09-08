@@ -32,23 +32,32 @@ TEST_F(SetupBigIntegersMultiplication, test_multiplication_number1_times_number2
 {
 	auto result = BigInteger<10>(number1) * BigInteger<10>(number2);
 	EXPECT_TRUE(result.to_number_string() == number1_times_number2);
+	auto result_reverse = BigInteger<10>(number2) * BigInteger<10>(number1);
+	EXPECT_TRUE(result_reverse.to_number_string() == number1_times_number2);
+
 }
 
 TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int1_times_big_int2)
 {
 	auto result = big_int1 * big_int2;
 	EXPECT_TRUE(result.to_number_string() == big_int1_times_big_int2);
+	auto result_reverse = big_int2 * big_int1;
+	EXPECT_TRUE(result_reverse.to_number_string() == big_int1_times_big_int2);
 }
 
 TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int1_times_big_int3)
 {
 	auto result = big_int1 * big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_int1_times_big_int3);
+	auto result_reverse = big_int3 * big_int1;
+	EXPECT_TRUE(result_reverse.to_number_string() == big_int1_times_big_int3);
 }
 
 TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int2_times_big_int3)
 {
 	auto result = big_int2 * big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_int2_times_big_int3);
+	auto result_reverse = big_int3 * big_int2;
+	EXPECT_TRUE(result_reverse.to_number_string() == big_int2_times_big_int3);
 
 }
