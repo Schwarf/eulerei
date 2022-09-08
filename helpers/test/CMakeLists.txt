@@ -11,7 +11,8 @@ enable_testing()
 add_executable(test_big_integer
         big_integer/addition.cpp
         big_integer/string_conversion.cpp
-        big_integer/subtraction.cpp)
+        big_integer/subtraction.cpp
+        big_integer/multiplication.cpp)
 
 
 
