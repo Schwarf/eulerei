@@ -5,6 +5,7 @@
 // Created by andreas on 04.09.22.
 //
 
+#include <regex>
 #include "gtest/gtest.h"
 #include "./../../big_integer.h"
 
@@ -20,6 +21,8 @@ protected:
 	BigInteger<1000> big_int1 = BigInteger<1000>(big_number1);
 	BigInteger<1000> big_int2 = BigInteger<1000>(big_number2);
 	BigInteger<1000> big_int3 = BigInteger<1000>(big_number3);
+	BigInteger<250> big_int1_less_bits = BigInteger<250>(big_number1);
+	BigInteger<250> big_int2_less_bits = BigInteger<250>(big_number2);
 	std::string big_int1_times_big_int2
 		{"21732593723759235407399765787370415333957046911250030416004483672888629718439465421083217"};
 	std::string big_int1_times_big_int3
@@ -67,11 +70,11 @@ TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int1_times_big_in
 {
 	auto result = big_int1 * big_int2 * big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_int1_times_big_int2_times_big_int3);
-	auto result_permuted1 = big_int3 * big_int2 *big_int1;
+	auto result_permuted1 = big_int3 * big_int2 * big_int1;
 	EXPECT_TRUE(result_permuted1.to_number_string() == big_int1_times_big_int2_times_big_int3);
-	auto result_permuted2 = big_int2 * big_int1 *big_int3;
+	auto result_permuted2 = big_int2 * big_int1 * big_int3;
 	EXPECT_TRUE(result_permuted2.to_number_string() == big_int1_times_big_int2_times_big_int3);
-	auto result_permuted3 = big_int2 * big_int3 *big_int1;
+	auto result_permuted3 = big_int2 * big_int3 * big_int1;
 	EXPECT_TRUE(result_permuted3.to_number_string() == big_int1_times_big_int2_times_big_int3);
 }
 
@@ -79,12 +82,24 @@ TEST_F(SetupBigIntegersMultiplication, test_multiplication_many_procucts)
 {
 	long long int start{1176247};
 	auto multiplicand = BigInteger<64>(start);
-	for (int i = 1; i < 1000; ++i)
-	{
+	for (int i = 1; i < 1000; ++i) {
 		auto string = std::to_string(i);
 		auto multiplier = BigInteger<64>(string);
-		auto product = multiplicand*multiplier;
-		EXPECT_TRUE(product.to_number_string() == std::to_string(start*i));
+		auto product = multiplicand * multiplier;
+		EXPECT_TRUE(product.to_number_string() == std::to_string(start * i));
+	}
+}
+
+TEST_F(SetupBigIntegersMultiplication, test_multiplication_too_few_bits)
+{
+
+	try {
+
+		auto result = big_int1_less_bits * big_int2_less_bits;
+		FAIL() << "Expected std::out_of_range";
+	}
+	catch (std::out_of_range const &error) {
+		EXPECT_TRUE(std::regex_match(error.what(), std::regex("Number of bits 250 is not enough to hold product!")));
 	}
 
 }
