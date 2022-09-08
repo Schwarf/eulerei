@@ -26,6 +26,8 @@ protected:
 		{"927673516296006980729894560881502774070244898464224480249709981742727683326165883231534258393132962111"};
 	std::string big_int2_times_big_int3
 		{"234200008968472643897563759490017090900853806121255762546487800286933351961031909024365909260379740965737038749477505295498821329328327"};
+	std::string big_int1_times_big_int2_times_big_int3
+		{"2172935391220725947951388165768892241012727217727475924473900459678405564867005266948939185637595909040828940716851363882143413508995324447139681383396661902228643"};
 };
 
 TEST_F(SetupBigIntegersMultiplication, test_multiplication_number1_times_number2)
@@ -59,5 +61,30 @@ TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int2_times_big_in
 	EXPECT_TRUE(result.to_number_string() == big_int2_times_big_int3);
 	auto result_reverse = big_int3 * big_int2;
 	EXPECT_TRUE(result_reverse.to_number_string() == big_int2_times_big_int3);
+}
+
+TEST_F(SetupBigIntegersMultiplication, test_multiplication_big_int1_times_big_int3_times_big_int2)
+{
+	auto result = big_int1 * big_int2 * big_int3;
+	EXPECT_TRUE(result.to_number_string() == big_int1_times_big_int2_times_big_int3);
+	auto result_permuted1 = big_int3 * big_int2 *big_int1;
+	EXPECT_TRUE(result_permuted1.to_number_string() == big_int1_times_big_int2_times_big_int3);
+	auto result_permuted2 = big_int2 * big_int1 *big_int3;
+	EXPECT_TRUE(result_permuted2.to_number_string() == big_int1_times_big_int2_times_big_int3);
+	auto result_permuted3 = big_int2 * big_int3 *big_int1;
+	EXPECT_TRUE(result_permuted3.to_number_string() == big_int1_times_big_int2_times_big_int3);
+}
+
+TEST_F(SetupBigIntegersMultiplication, test_multiplication_many_procucts)
+{
+	long long int start{1176247};
+	auto multiplicand = BigInteger<64>(start);
+	for (int i = 1; i < 1000; ++i)
+	{
+		auto string = std::to_string(i);
+		auto multiplier = BigInteger<64>(string);
+		auto product = multiplicand*multiplier;
+		EXPECT_TRUE(product.to_number_string() == std::to_string(start*i));
+	}
 
 }
