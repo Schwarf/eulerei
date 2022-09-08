@@ -31,7 +31,7 @@ public:
 	}
 	explicit BigInteger(const std::string &value)
 	{
-		value_in_twos_complement_representation_ = convert_string_to_bitset(value);
+		value_in_twos_complement_representation_ = _convert_string_to_bitset(value);
 	}
 
 	explicit BigInteger(const std::bitset<number_of_bits> &initial_value)
@@ -62,33 +62,33 @@ public:
 	// Equal operator
 	bool operator==(const BigInteger<number_of_bits> &rhs)
 	{
-		return are_equal(*this, rhs);
+		return _are_equal(*this, rhs);
 	}
 
 	BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend)
 	{
 		BigInteger<number_of_bits> difference;
-		subtraction(this->value_in_twos_complement_representation_,
-					subtrahend.value_in_twos_complement_representation_,
-					difference.value_in_twos_complement_representation_);
+		_subtraction(this->value_in_twos_complement_representation_,
+					 subtrahend.value_in_twos_complement_representation_,
+					 difference.value_in_twos_complement_representation_);
 		return difference;
 	}
 
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &multiplier)
 	{
 		BigInteger<number_of_bits> product;
-		addition(this->value_in_twos_complement_representation_,
-				 multiplier.value_in_twos_complement_representation_,
-				 product.value_in_twos_complement_representation_);
+		_addition(this->value_in_twos_complement_representation_,
+				  multiplier.value_in_twos_complement_representation_,
+				  product.value_in_twos_complement_representation_);
 		return product;
 	}
 
 	BigInteger<number_of_bits> operator*(const BigInteger<number_of_bits> &rhs)
 	{
 		BigInteger<number_of_bits> result;
-		multiplication(this->value_in_twos_complement_representation_,
-					   rhs.value_in_twos_complement_representation_,
-					   result.value_in_twos_complement_representation_);
+		_multiplication(this->value_in_twos_complement_representation_,
+						rhs.value_in_twos_complement_representation_,
+						result.value_in_twos_complement_representation_);
 		return result;
 	}
 
@@ -126,13 +126,13 @@ public:
 
 	std::string to_number_string()
 	{
-		return to_decimal_string(value_in_twos_complement_representation_);
+		return _to_decimal_string(value_in_twos_complement_representation_);
 	}
 
 
 private:
 	inline static const auto binary_one = std::bitset<number_of_bits>(1);
-	int first_bit_from_left(const std::bitset<number_of_bits> &value)
+	int _first_bit_from_left(const std::bitset<number_of_bits> &value)
 	{
 		int index = value.size() - 1;
 		while (index > -1 && !value.test(index))
@@ -140,8 +140,8 @@ private:
 		return index;
 	}
 
-	void addition(std::bitset<number_of_bits> addend1, std::bitset<number_of_bits> addend2,
-				  std::bitset<number_of_bits> &sum)
+	void _addition(std::bitset<number_of_bits> addend1, std::bitset<number_of_bits> addend2,
+				   std::bitset<number_of_bits> &sum)
 	{
 		std::bitset<number_of_bits> carry_over;
 		while (addend2.any()) {
@@ -152,31 +152,39 @@ private:
 		sum = std::move(addend1);
 	}
 
-	void get_twos_complement(std::bitset<number_of_bits> &value)
+	void _get_twos_complement(std::bitset<number_of_bits> &value)
 	{
-		addition(~value, binary_one, value);
+		_addition(~value, binary_one, value);
 	}
 
-	void subtraction(std::bitset<number_of_bits> minuend,
-					 std::bitset<number_of_bits> subtrahend,
-					 std::bitset<number_of_bits> &difference)
+	void _subtraction(std::bitset<number_of_bits> minuend,
+					  std::bitset<number_of_bits> subtrahend,
+					  std::bitset<number_of_bits> &difference)
 	{
-		get_twos_complement(subtrahend);
-		addition(minuend, subtrahend, difference);
+		_get_twos_complement(subtrahend);
+		_addition(minuend, subtrahend, difference);
+	}
+
+	bool _enough_bits_for_product(int left_bit_multiplicand, int left_bit_multiplier)
+	{
+		return number_of_bits >= left_bit_multiplicand+left_bit_multiplier;
 	}
 
 	// We use Booth's algorithm
-	void multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
-						std::bitset<number_of_bits> &result)
+	void _multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
+						 std::bitset<number_of_bits> &result)
 	{
+		if(!_enough_bits_for_product(_first_bit_from_left(multiplicand), _first_bit_from_left(multiplier)))
+			throw std::out_of_range("Number of bits " + std::to_string(number_of_bits)+ " is not enough to hold product!");
+
 		bool last_cycle_bit{false};
 		std::bitset<number_of_bits> product;
 		bool most_significand_bit{false};
 		for (int index = 0; index < number_of_bits; ++index) {
 			if (multiplier[0] && !last_cycle_bit)
-				subtraction(product, multiplicand, product);
+				_subtraction(product, multiplicand, product);
 			else if (!multiplier[0] && last_cycle_bit)
-				addition(product, multiplicand, product);
+				_addition(product, multiplicand, product);
 			most_significand_bit = product[number_of_bits -1];
 			last_cycle_bit = multiplier[0];
 
@@ -190,12 +198,12 @@ private:
 		result= product;
 	}
 
-	std::string to_decimal_string(std::bitset<number_of_bits> value)
+	std::string _to_decimal_string(std::bitset<number_of_bits> value)
 	{
 		constexpr int base = 10;
 		std::string result{};
 		if (is_negative()) {
-			get_twos_complement(value);
+			_get_twos_complement(value);
 		}
 		// Using the doubling method we iterate from left to right through the bitset. While moving right doubling
 		// the digit and if bit is set, add 1.
@@ -223,7 +231,7 @@ private:
 		return (is_negative() ? "-" + result : result);
 	}
 
-	bool are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)
+	bool _are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)
 	{
 		if (left_hand_side.has_negative_sign_ != right_hand_side.has_negative_sign_)
 			return false;
@@ -236,7 +244,7 @@ private:
 	}
 
 	// We work with 2's complement binary representation. Leading bit is sign bit.
-	std::bitset<number_of_bits> convert_string_to_bitset(const std::string &str)
+	std::bitset<number_of_bits> _convert_string_to_bitset(const std::string &str)
 	{
 		auto absolute_value_string = validate_string_and_determine_sign(str);
 		int digit{};
@@ -246,14 +254,14 @@ private:
 			digit = absolute_value_string.back() - '0';
 			// instead of 'modulo 2' operation we just set the bits for odd decimal digits
 			result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
-			absolute_value_string = divide_string_decimal_number_by_2(absolute_value_string);
+			absolute_value_string = _divide_string_decimal_number_by_2(absolute_value_string);
 		}
 		if (has_negative_sign_)
-			get_twos_complement(result);
+			_get_twos_complement(result);
 		return result;
 	}
 
-	std::string divide_string_decimal_number_by_2(const std::string &input)
+	std::string _divide_string_decimal_number_by_2(const std::string &input)
 	// we divide starting from the most significant (leftmost) digit
 	{
 		std::string result;
