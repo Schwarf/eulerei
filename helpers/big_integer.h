@@ -5,6 +5,7 @@
 #ifndef BIG_INTEGER_H
 #define BIG_INTEGER_H
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <bitset>
 #include <utility>
@@ -137,23 +138,21 @@ public:
 		return _to_decimal_string(value_in_twos_complement_representation_);
 	}
 
-	BigInteger<number_of_bits> to_power(long long int exponent)
+	BigInteger<number_of_bits> to_power(int64_t exponent)
 	{
-		BigInteger<number_of_bits> result;
 		auto base = *this;
-		while(exponent !=0 )
+		auto help = BigInteger<number_of_bits>(1);
+		while(exponent >1 )
 		{
 			if(exponent & 1)
 			{
-				base *= *this;
+				help *= base;
 				exponent--;
 			}
-			else {
-				base *= base;
-				result = base;
-				exponent>>=1 ;
-			}
+			exponent>>=1;
+			base *= base;
 		}
+		auto result = base*help;
 		return result;
 
 
