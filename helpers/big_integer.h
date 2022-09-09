@@ -93,7 +93,7 @@ public:
 		return result;
 	}
 
-	BigInteger<number_of_bits> & operator*=(const BigInteger<number_of_bits> &rhs)
+	BigInteger<number_of_bits> &operator*=(const BigInteger<number_of_bits> &rhs)
 	{
 		_multiplication(this->value_in_twos_complement_representation_,
 						rhs.value_in_twos_complement_representation_,
@@ -142,19 +142,16 @@ public:
 	{
 		auto base = *this;
 		auto help = BigInteger<number_of_bits>(1);
-		while(exponent >1 )
-		{
-			if(exponent & 1)
-			{
+		while (exponent > 1) {
+			if (exponent & 1) {
 				help *= base;
 				exponent--;
 			}
-			exponent>>=1;
+			exponent >>= 1;
 			base *= base;
 		}
-		auto result = base*help;
+		auto result = base * help;
 		return result;
-
 
 	}
 
@@ -195,15 +192,16 @@ private:
 
 	bool _enough_bits_for_product(int left_bit_multiplicand, int left_bit_multiplier)
 	{
-		return number_of_bits >= left_bit_multiplicand+left_bit_multiplier;
+		return number_of_bits >= left_bit_multiplicand + left_bit_multiplier;
 	}
 
 	// We use Booth's algorithm
 	void _multiplication(std::bitset<number_of_bits> multiplicand, std::bitset<number_of_bits> multiplier,
 						 std::bitset<number_of_bits> &result)
 	{
-		if(!_enough_bits_for_product(_first_bit_from_left(multiplicand), _first_bit_from_left(multiplier)))
-			throw std::out_of_range("Number of bits " + std::to_string(number_of_bits)+ " is not enough to hold product!");
+		if (!_enough_bits_for_product(_first_bit_from_left(multiplicand), _first_bit_from_left(multiplier)))
+			throw std::out_of_range(
+				"Number of bits " + std::to_string(number_of_bits) + " is not enough to hold product!");
 
 		bool last_cycle_bit{false};
 		std::bitset<number_of_bits> product;
@@ -213,17 +211,17 @@ private:
 				_subtraction(product, multiplicand, product);
 			else if (!multiplier[0] && last_cycle_bit)
 				_addition(product, multiplicand, product);
-			most_significand_bit = product[number_of_bits -1];
+			most_significand_bit = product[number_of_bits - 1];
 			last_cycle_bit = multiplier[0];
 
 			multiplier >>= 1;
-			multiplier[number_of_bits-1] = product[0];
-			product >>=1;
-			product[number_of_bits-1] = most_significand_bit;
+			multiplier[number_of_bits - 1] = product[0];
+			product >>= 1;
+			product[number_of_bits - 1] = most_significand_bit;
 
 		}
 		product = multiplier;
-		result= product;
+		result = product;
 	}
 
 	std::string _to_decimal_string(std::bitset<number_of_bits> value)

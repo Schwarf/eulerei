@@ -15,8 +15,8 @@ protected:
 	std::string big_number2_minus_1{"2342349278113243248309180938234224831262673928634278018326104"};
 	std::string big_number2_minus_3{"-99985092384306880749204227679936173128542108106984428848262617091839129366"};
 	std::string big_number3_minus_2{"99985092384306880749204227679936173128542108106984428848262617091839129366"};
-	std::string big_number3_minus_4 {"0"};
-	std::string big_number4_minus_3 {"-199970184768618446196964681846368964618960684682187619662744378958476877158"};
+	std::string big_number3_minus_4{"0"};
+	std::string big_number4_minus_3{"-199970184768618446196964681846368964618960684682187619662744378958476877158"};
 	std::string number1{"17"};
 	std::string number2{"9"};
 	std::string number1_minus_number2{"8"};
@@ -30,7 +30,7 @@ protected:
 
 TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number1_minus_big_number2)
 {
-	auto result = big_int1 - big_int2 ;
+	auto result = big_int1 - big_int2;
 	//std::cout << result.to_binary_string() << std::endl;
 	EXPECT_TRUE(result.to_number_string() == big_number1_minus_2);
 	result = big_int2 - big_int1;
@@ -40,15 +40,15 @@ TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number1_minus_big_numbe
 
 TEST_F(SetupBigIntegersSubtraction, test_subtraction_number1_minus_number2)
 {
-	auto result = BigInteger<10>(number1) - BigInteger<10>(number2) ;
+	auto result = BigInteger<10>(number1) - BigInteger<10>(number2);
 	EXPECT_TRUE(result.to_number_string() == number1_minus_number2);
 	result = BigInteger<10>(number2) - BigInteger<10>(number1);\
-	EXPECT_TRUE(result.to_number_string() == number2_minus_number1);
+    EXPECT_TRUE(result.to_number_string() == number2_minus_number1);
 }
 
 TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number2_minus_big_number3)
 {
-	auto result = big_int2 - big_int3 ;
+	auto result = big_int2 - big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_number2_minus_3);
 	result = big_int3 - big_int2;
 	EXPECT_TRUE(result.to_number_string() == big_number3_minus_2);
@@ -56,7 +56,7 @@ TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number2_minus_big_numbe
 
 TEST_F(SetupBigIntegersSubtraction, test_subtraction_big_number3_minus_big_number4)
 {
-	auto result = big_int3 + big_int4 ;
+	auto result = big_int3 + big_int4;
 	EXPECT_TRUE(result.to_number_string() == big_number3_minus_4);
 	result = big_int4 - big_int3;
 	EXPECT_TRUE(result.to_number_string() == big_number4_minus_3);
