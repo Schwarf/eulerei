@@ -92,6 +92,14 @@ public:
 		return result;
 	}
 
+	BigInteger<number_of_bits> & operator*=(const BigInteger<number_of_bits> &rhs)
+	{
+		_multiplication(this->value_in_twos_complement_representation_,
+						rhs.value_in_twos_complement_representation_,
+						this->value_in_twos_complement_representation_);
+		return *this;
+	}
+
 	std::string validate_string_and_determine_sign(const std::string &str)
 	{
 		if (str.empty()) {
@@ -129,6 +137,27 @@ public:
 		return _to_decimal_string(value_in_twos_complement_representation_);
 	}
 
+	BigInteger<number_of_bits> to_power(long long int exponent)
+	{
+		BigInteger<number_of_bits> result;
+		auto base = *this;
+		while(exponent !=0 )
+		{
+			if(exponent & 1)
+			{
+				base *= *this;
+				exponent--;
+			}
+			else {
+				base *= base;
+				result = base;
+				exponent>>=1 ;
+			}
+		}
+		return result;
+
+
+	}
 
 private:
 	inline static const auto binary_one = std::bitset<number_of_bits>(1);
