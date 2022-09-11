@@ -244,9 +244,7 @@ private:
 
     bool
     _are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side) {
-        if (left_hand_side.is_negative() != right_hand_side.is_negative())
-            return false;
-        for (int i = 0; i < number_of_bits; ++i) {
+        for (int i = number_of_bits-1; i > -1; --i) {
             if (right_hand_side.value_in_twos_complement_representation_[i]
                 != left_hand_side.value_in_twos_complement_representation_[i])
                 return false;
