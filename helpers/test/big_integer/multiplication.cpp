@@ -83,6 +83,14 @@ TEST_F(SetupBigIntegersMultiplication, test_multiplication_many_procucts) {
     }
 }
 
+
+TEST_F(SetupBigIntegersMultiplication, test_multiplication_negative_numbers) {
+    auto multiplicand = BigInteger<64>(-2);
+    auto multiplier = BigInteger<64>(-1);
+    auto result = multiplicand*multiplier;
+    EXPECT_TRUE(result.to_number_string() == "2");
+}
+
 TEST_F(SetupBigIntegersMultiplication, test_multiplication_too_few_bits) {
 
     try {

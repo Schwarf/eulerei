@@ -52,7 +52,7 @@ public:
 
     }
 
-    bool is_negative() {
+    bool is_negative() const {
         return value_in_twos_complement_representation_[number_of_bits - 1];
     }
 
@@ -61,7 +61,7 @@ public:
         return _are_equal(*this, rhs);
     }
 
-    // Equal operator
+    // Unequal operator
     bool operator!=(const BigInteger<number_of_bits> &rhs) {
         return !_are_equal(*this, rhs);
     }
@@ -73,6 +73,7 @@ public:
                      difference.value_in_twos_complement_representation_);
         return difference;
     }
+
 
     // unary minus sign operator
     BigInteger<number_of_bits> operator-() {
@@ -90,16 +91,35 @@ public:
 
     BigInteger<number_of_bits> operator*(const BigInteger<number_of_bits> &rhs) {
         BigInteger<number_of_bits> result;
-        _multiplication(this->value_in_twos_complement_representation_,
-                        rhs.value_in_twos_complement_representation_,
-                        result.value_in_twos_complement_representation_);
+        bool is_negative = this->is_negative() ^ rhs.is_negative();
+        auto multiplicand = this->value_in_twos_complement_representation_;
+        auto multiplier = rhs.value_in_twos_complement_representation_;
+
+        if (this->is_negative())
+            _get_twos_complement(multiplicand);
+        if (rhs.is_negative())
+            _get_twos_complement(multiplier);
+
+        _multiplication(multiplicand, multiplier, result.value_in_twos_complement_representation_);
+        if (is_negative)
+            _get_twos_complement(result.value_in_twos_complement_representation_);
         return result;
     }
 
     BigInteger<number_of_bits> &operator*=(const BigInteger<number_of_bits> &rhs) {
-        _multiplication(this->value_in_twos_complement_representation_,
-                        rhs.value_in_twos_complement_representation_,
-                        this->value_in_twos_complement_representation_);
+        bool is_negative = this->is_negative() ^ rhs.is_negative();
+        auto multiplicand = this->value_in_twos_complement_representation_;
+        auto multiplier = rhs.value_in_twos_complement_representation_;
+
+        if (this->is_negative())
+            _get_twos_complement(multiplicand);
+        if (rhs.is_negative())
+            _get_twos_complement(multiplier);
+
+        _multiplication(multiplicand, multiplier, this->value_in_twos_complement_representation_);
+        if (is_negative)
+            _get_twos_complement(this->value_in_twos_complement_representation_);
+
         return *this;
     }
 
@@ -249,7 +269,7 @@ private:
 
     bool
     _are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side) {
-        for (int i = number_of_bits-1; i > -1; --i) {
+        for (int i = number_of_bits - 1; i > -1; --i) {
             if (right_hand_side.value_in_twos_complement_representation_[i]
                 != left_hand_side.value_in_twos_complement_representation_[i])
                 return false;
