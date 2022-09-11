@@ -9,7 +9,7 @@ int main()
 	auto x = BigInteger<1000>(s1);
 
 	std::string input{"11823901840948239058230923095823095823091"};
-	auto z = BigInteger<1000>(input);
+	auto z = -x;
 
 	std::cout << z.to_number_string() << std::endl;
 	auto y = x+z;
@@ -18,7 +18,7 @@ int main()
 	auto t1 = BigInteger<1000>("9");
 	auto t2 = BigInteger<1000>("17");
 	auto e1 = t1 + t2;
-	std::cout << "e1 = " << e1.to_number_string()<< std::endl;
+	std::cout << "z = " << z.to_number_string()<< std::endl;
 	std::bitset<4000> f(25);
 	std::cout << "t1 = " << f.size()<< std::endl;
 	std::cout << f.to_string() << std::endl;

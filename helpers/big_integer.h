@@ -74,7 +74,12 @@ public:
 					 difference.value_in_twos_complement_representation_);
 		return difference;
 	}
-
+    // unary minus sign operator
+    BigInteger<number_of_bits> operator-()
+    {
+        _get_twos_complement(this->value_in_twos_complement_representation_);
+        return *this;
+    }
 	BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &multiplier)
 	{
 		BigInteger<number_of_bits> product;
