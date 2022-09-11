@@ -2,7 +2,20 @@
 // Created by andreas on 30.08.22.
 //
 #include <iostream>
-#include <limits>
+#include "./../helpers/big_integer.h"
+
+std::string alternative(){
+    auto sum =  BigInteger<10100>();
+
+    for(int i=1; i < 1001; ++i) {
+        auto summand = BigInteger<10100>(i);
+        sum += summand.to_power(i);
+        std::cout << "i = " << i << std::endl;
+    }
+    std::cout << sum.to_number_string() << std::endl;
+}
+
+
 int main()
 {
 	long int result{};
@@ -19,4 +32,5 @@ int main()
 		result %= modulo;
 	}
 	std::cout << result << std::endl;
+    auto test = alternative();
 }

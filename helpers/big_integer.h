@@ -81,12 +81,19 @@ public:
         return *this;
     }
 
-    BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &multiplier) {
-        BigInteger<number_of_bits> product;
+    BigInteger<number_of_bits> operator+(const BigInteger<number_of_bits> &addend) {
+        BigInteger<number_of_bits> sum;
         _addition(this->value_in_twos_complement_representation_,
-                  multiplier.value_in_twos_complement_representation_,
-                  product.value_in_twos_complement_representation_);
-        return product;
+                  addend.value_in_twos_complement_representation_,
+                  sum.value_in_twos_complement_representation_);
+        return sum;
+    }
+
+    BigInteger<number_of_bits> & operator+=(const BigInteger<number_of_bits> &addend) {
+        _addition(this->value_in_twos_complement_representation_,
+                  addend.value_in_twos_complement_representation_,
+                  this->value_in_twos_complement_representation_);
+        return *this;
     }
 
     BigInteger<number_of_bits> operator*(const BigInteger<number_of_bits> &rhs) {
@@ -167,8 +174,7 @@ public:
             exponent >>= 1;
             base *= base;
         }
-        auto result = base * help;
-        return result;
+        return base*help;
 
     }
 
