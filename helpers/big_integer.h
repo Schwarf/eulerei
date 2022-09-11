@@ -26,7 +26,7 @@ public:
 		std::bitset<number_of_bits>();
 	}
 
-	explicit BigInteger(long long initial_value)
+	explicit BigInteger(const long long & initial_value)
 	{
 		value_in_twos_complement_representation_ = std::bitset<number_of_bits>(initial_value);
 	}
@@ -106,7 +106,7 @@ public:
 		return *this;
 	}
 
-	std::string validate_string_and_determine_sign(const std::string &str)
+	std::string validate_string_and_determine_sign(const std::string &str, bool & is_negative)
 	{
 		if (str.empty()) {
 			throw std::invalid_argument("BigInteger: String is empty");
@@ -120,7 +120,7 @@ public:
 		if (sign == '-') {
 			if (str.size() < 2)
 				throw std::invalid_argument("BigInteger: String contains only a minus sign: " + str);
-			has_negative_sign_ = true;
+            is_negative = true;
 			first_digit_position = 1;
 		}
 		if (str[first_digit_position] == '0') {
@@ -236,7 +236,7 @@ private:
 		if (is_negative()) {
 			_get_twos_complement(value);
 		}
-		// Using the doubling method we iterate from left to right through the bitset. While moving right doubling
+		// Using the doubling method we iterate from left to right through the bitset. While moving right, doubling
 		// the digit and if bit is set, add 1.
 		// Whenever we are above-equal base=10 we determine the digit by subtracting 10 and set the
 		// remainder bit.
@@ -264,7 +264,7 @@ private:
 
 	bool _are_equal(const BigInteger<number_of_bits> &left_hand_side, const BigInteger<number_of_bits> &right_hand_side)
 	{
-		if (left_hand_side.has_negative_sign_ != right_hand_side.has_negative_sign_)
+		if (left_hand_side.is_negative() != right_hand_side.is_negative())
 			return false;
 		for (int i = 0; i < number_of_bits; ++i) {
 			if (right_hand_side.value_in_twos_complement_representation_[i]
@@ -277,7 +277,8 @@ private:
 	// We work with 2's complement binary representation. Leading bit is sign bit.
 	std::bitset<number_of_bits> _convert_string_to_bitset(const std::string &str)
 	{
-		auto absolute_value_string = validate_string_and_determine_sign(str);
+        bool is_negative{};
+		auto absolute_value_string = validate_string_and_determine_sign(str, is_negative);
 		int digit{};
 		int bit_index{};
 		std::bitset<number_of_bits> result;
@@ -287,7 +288,7 @@ private:
 			result[bit_index++] = IS_ODD_DECIMAL_DIGIT_[digit];
 			absolute_value_string = _divide_string_decimal_number_by_2(absolute_value_string);
 		}
-		if (has_negative_sign_)
+		if (is_negative)
 			_get_twos_complement(result);
 		return result;
 	}
@@ -312,7 +313,6 @@ private:
 		return result;
 	}
 
-	bool has_negative_sign_{false};
 	std::bitset<number_of_bits> value_in_twos_complement_representation_;
 };
 
