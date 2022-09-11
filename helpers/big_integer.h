@@ -61,6 +61,11 @@ public:
         return _are_equal(*this, rhs);
     }
 
+    // Equal operator
+    bool operator!=(const BigInteger<number_of_bits> &rhs) {
+        return !_are_equal(*this, rhs);
+    }
+
     BigInteger<number_of_bits> operator-(const BigInteger<number_of_bits> &subtrahend) {
         BigInteger<number_of_bits> difference;
         _subtraction(this->value_in_twos_complement_representation_,

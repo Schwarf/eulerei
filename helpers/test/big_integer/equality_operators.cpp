@@ -24,3 +24,12 @@ TEST_F(SetupBigIntegersEqualOperator, test_equal_big_number1_equal_big_number2) 
     result = big_int3 == big_int4;
     EXPECT_TRUE(result);
 }
+
+TEST_F(SetupBigIntegersEqualOperator, test_unequal_big_number1_equal_big_number2) {
+    auto result = big_int1 != big_int2;
+    EXPECT_FALSE(result);
+    result = big_int1 != big_int3;
+    EXPECT_TRUE(result);
+    result = big_int3 != big_int4;
+    EXPECT_FALSE(result);
+}
